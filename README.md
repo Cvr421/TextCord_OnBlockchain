@@ -1,4 +1,4 @@
-# Dappcord
+# TextCord_OnBlockchain
 
 ## Technology Stack & Tools
 

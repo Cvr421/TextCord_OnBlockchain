@@ -9,7 +9,7 @@ import Channels from './components/Channels'
 import Messages from './components/Messages'
 
 // ABIs
-import TextCord_OnBlockchain from './abis/TextCord_OnBlockchain.json'
+import TextCord from './abis/TextCord.json'
 
 // Config
 import config from './config.json';
@@ -19,10 +19,21 @@ const socket = io('ws://localhost:3030');
 
 function App() {
 
+  const [account,setAccount]=useState(null);
+  const loadBlockchainData=async()=>{
+    window.ethereum.on('accountsChanged',async()=>{
+      window.location.reload()
+    })
+  }
+
+  useEffect(()=>{
+    loadBlockchainData()
+  },[])
+
+
   return (
     <div>
-      <h1 style={{ textAlign: "center", padding: "15px" }}>Welcome to Dappcord</h1>
-
+     < Navigation account={account} setAccount={setAccount}/>
       <main>
 
       </main>

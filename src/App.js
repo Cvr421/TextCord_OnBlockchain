@@ -21,20 +21,32 @@ function App() {
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
   const [textcord, setTextCord] = useState(null);
+  const [channels, setChannels] = useState([])
   const loadBlockchainData = async () => {
     // This provider connect this app to ethereum blockchain through metamask 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     setProvider(provider)
-   // getting network 
+    // getting network 
     const network = await provider.getNetwork()
     // Getting contract address and abis and provider
     const textcord = new ethers.Contract(config[network.chainId].TextCord.address, abis, provider)
 
     setTextCord(textcord);
- console.log(textcord.address)
+    console.log(textcord.address)
 
- const channel =await textcord.getChannel(2)
- console.log(channel)
+    // const channel = await textcord.getChannel(2)
+    // console.log(channel)
+    const totalChannels = await textcord.totalChannels()
+    const channelss = []
+
+    for (var i = 1; i <= totalChannels; i++) {
+      const channel = await textcord.getChannel(i)
+      channelss.push(channel);
+    }
+    setChannels(channelss);
+    console.log(channelss);
+
+
 
     window.ethereum.on('accountsChanged', async () => {
       window.location.reload()
@@ -50,7 +62,15 @@ function App() {
     <div>
       < Navigation account={account} setAccount={setAccount} />
       <main>
-
+        < Servers />
+        <Channels 
+        provider={provider}
+        account={account}
+        textcord={textcord}
+        channels={channels}
+        
+        />
+        <Messages />
       </main>
     </div>
   );

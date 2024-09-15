@@ -4,7 +4,7 @@ const Channels = ({ provider, account, textcord, channels, currentChannel, setCu
  const hasJoined=await textcord.hasJoined(channel.id,account)
 
   if(hasJoined){
-    console.log("joined...")
+   setCurrentChannel(channel)
   }else{
     const signer=await provider.getSigner()
     const transaction=await textcord.connect(signer).mint(channel.id,{value: channel.cost})
@@ -24,6 +24,7 @@ const Channels = ({ provider, account, textcord, channels, currentChannel, setCu
             <li
               key={index}
               onClick={() => channelHandler(channel)}
+              className={currentChannel&& currentChannel.id.toString() === channel.id.toString() ? "active": ""}
             >
               {channel.name}
             </li>

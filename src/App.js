@@ -22,6 +22,9 @@ function App() {
   const [account, setAccount] = useState(null);
   const [textcord, setTextCord] = useState(null);
   const [channels, setChannels] = useState([])
+  const [currentChannel,setCurrentChannel]=useState(null)
+  const [messages,setMessages]=useState([])
+
   const loadBlockchainData = async () => {
     // This provider connect this app to ethereum blockchain through metamask 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -32,7 +35,7 @@ function App() {
     const textcord = new ethers.Contract(config[network.chainId].TextCord.address, abis, provider)
 
     setTextCord(textcord);
-    console.log(textcord.address)
+    // console.log(textcord.address)
 
     // const channel = await textcord.getChannel(2)
     // console.log(channel)
@@ -44,7 +47,7 @@ function App() {
       channelss.push(channel);
     }
     setChannels(channelss);
-    console.log(channelss);
+    // console.log(channelss);
 
 
 
@@ -55,6 +58,25 @@ function App() {
 
   useEffect(() => {
     loadBlockchainData()
+
+
+socket.on("connect",()=>{
+  socket.emit('get messages')
+})
+socket.on("new message",(messages)=>{
+ setMessages(messages)
+})
+
+socket.on("get messages",(messages)=>{
+  setMessages(messages)
+})
+
+return()=>{
+  socket.off('conect')
+  socket.off('new messages')
+  socket.off ('get messages')
+}
+
   }, [])
 
 
@@ -68,9 +90,10 @@ function App() {
         account={account}
         textcord={textcord}
         channels={channels}
-        
+        currentChannel={currentChannel}
+        setCurrentChannel={setCurrentChannel}
         />
-        <Messages />
+        <Messages account={account} messages={messages} currentChannel={currentChannel}/>
       </main>
     </div>
   );
